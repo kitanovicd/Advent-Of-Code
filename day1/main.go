@@ -2,9 +2,24 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strconv"
 )
+
+func updateTopThreeSums(first, second, third *int, value int) {
+	switch {
+	case value > *first:
+		*third = *second
+		*second = *first
+		*first = value
+	case value > *second:
+		*third = *second
+		*second = value
+	case value > *third:
+		*third = value
+	}
+}
 
 func main() {
 	filePath := "input.txt"
@@ -18,29 +33,18 @@ func main() {
 	fileScanner := bufio.NewScanner(file)
 	fileScanner.Split(bufio.ScanLines)
 
-	first := 0
-	second := 0
-	third := 0
+	first, second, third := 0, 0, 0
 	currSum := 0
 
 	for fileScanner.Scan() {
-		if fileScanner.Text() == "" {
-			switch {
-			case currSum > first:
-				third = second
-				second = first
-				first = currSum
-			case currSum > second:
-				third = second
-				second = currSum
-			case currSum > third:
-				third = currSum
-			}
+		line := fileScanner.Text()
+		if line == "" {
+			updateTopThreeSums(&first, &second, &third, currSum)
 			currSum = 0
 			continue
 		}
 
-		currentValue, err := strconv.Atoi(fileScanner.Text())
+		currentValue, err := strconv.Atoi(line)
 		if err != nil {
 			panic("Cannot convert string to int")
 		}
@@ -48,17 +52,8 @@ func main() {
 		currSum += currentValue
 	}
 
-	switch {
-	case currSum > first:
-		third = second
-		second = first
-		first = currSum
-	case currSum > second:
-		third = second
-		second = currSum
-	case currSum > third:
-		third = currSum
-	}
+	updateTopThreeSums(&first, &second, &third, currSum)
 
-	println("Result is", first+second+third)
+	result := first + second + third
+	fmt.Println("Result is", result)
 }
