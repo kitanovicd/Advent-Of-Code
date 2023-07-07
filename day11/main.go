@@ -196,7 +196,6 @@ func main() {
 		fmt.Println("Monkey", i, "has", monkey.CountInspected, "items")
 	}
 
-	//Sort monkeys by number of inspected items
 	sort.Slice(monkeys, func(i, j int) bool {
 		return monkeys[i].CountInspected > monkeys[j].CountInspected
 	})
