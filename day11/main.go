@@ -11,7 +11,6 @@ import (
 )
 
 var WORRY_DIVISION int = 1
-var MAXIMUM_NUMBER int = 1
 var NUMBER_OF_ROUNDS int = 10000
 
 type Monkey struct {
@@ -110,7 +109,7 @@ func parseBlock(file *os.File, fileScanner *bufio.Scanner) (Monkey, error) {
 	}, nil
 }
 
-func executeOperation(operation byte, operator1 int, operator2 int) (int, error) {
+func executeOperation(operation byte, operator1 int, operator2 int, modBy int) (int, error) {
 	if operator2 == 0 {
 		operator2 = operator1
 	}
@@ -129,7 +128,7 @@ func executeOperation(operation byte, operator1 int, operator2 int) (int, error)
 		return 0, errors.New("Invalid operation")
 	}
 
-	return (result / WORRY_DIVISION) % MAXIMUM_NUMBER, nil
+	return (result / WORRY_DIVISION) % modBy, nil
 }
 
 func main() {
@@ -146,6 +145,7 @@ func main() {
 	fileScanner := bufio.NewScanner(file)
 	fileScanner.Split(bufio.ScanLines)
 
+	modBy := 1
 	for fileScanner.Scan() {
 		monkey, err := parseBlock(file, fileScanner)
 
@@ -154,18 +154,13 @@ func main() {
 		}
 
 		monkeys = append(monkeys, monkey)
-		MAXIMUM_NUMBER *= monkey.Divisor
+		modBy *= monkey.Divisor
 	}
-
-	fmt.Println("Maximum number is:", MAXIMUM_NUMBER)
-
-	maxCountInspected1 := 0
-	maxCountInspected2 := 0
 
 	for step := 1; step <= NUMBER_OF_ROUNDS; step++ {
 		for i, monkey := range monkeys {
 			for _, item := range monkey.Items {
-				result, err := executeOperation(monkey.Operation, item, monkey.Operator)
+				result, err := executeOperation(monkey.Operation, item, monkey.Operator, modBy)
 				if err != nil {
 					panic(err)
 				}
@@ -183,17 +178,7 @@ func main() {
 			monkeys[i].CountInspected += len(monkeys[i].Items)
 			monkeys[i].Items = []int{}
 
-			if monkeys[i].CountInspected > maxCountInspected1 {
-				maxCountInspected2 = maxCountInspected1
-				maxCountInspected1 = monkeys[i].CountInspected
-			} else if monkeys[i].CountInspected > maxCountInspected2 {
-				maxCountInspected2 = monkeys[i].CountInspected
-			}
 		}
-	}
-
-	for i, monkey := range monkeys {
-		fmt.Println("Monkey", i, "has", monkey.CountInspected, "items")
 	}
 
 	sort.Slice(monkeys, func(i, j int) bool {
