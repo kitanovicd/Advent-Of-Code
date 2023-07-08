@@ -24,7 +24,6 @@ func count(counted *map[coordinate]bool, row, column int) int {
 }
 
 func parseFile(file *os.File) (*[][]int, *map[coordinate]bool, int, error) {
-
 	row := 0
 	column := 0
 	result := 0
