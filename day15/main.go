@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/kitanovicd/Advent-Of-Code/Advent-Of-Code/day15/first"
+	"github.com/kitanovicd/Advent-Of-Code/Advent-Of-Code/day15/second"
 )
 
 func main() {
-	result, err := first.Solve()
+	result, err := second.Solve()
 	if err != nil {
 		panic(err)
 	}
